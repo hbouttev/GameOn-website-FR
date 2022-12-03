@@ -68,6 +68,7 @@
                                id="first"
                                name="first"
                                minlength="2"
+                               pattern="^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$"
                                required
                         /><br>
                     </div>
@@ -78,6 +79,7 @@
                                id="last"
                                name="last"
                                minlength="2"
+                               pattern="^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$"
                                required
                         /><br>
                     </div>
@@ -87,6 +89,7 @@
                                type="email"
                                id="email"
                                name="email"
+                               pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
                                required
                         /><br>
                     </div>
@@ -96,6 +99,8 @@
                                type="date"
                                id="birthdate"
                                name="birthdate"
+                               min="1900-01-01"
+                               max="2022-12-31"
                                required
                         /><br>
                     </div>
