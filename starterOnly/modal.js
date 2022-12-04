@@ -112,18 +112,6 @@ function resetFormControlError(formControl) {
     }
 }
 
-function isValideName(name) {
-    const nameRegex = /^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/;
-    console.log(name);
-    console.log(nameRegex.test(name));
-    return nameRegex.test(name);
-}
-
-function isValideMail(mail) {
-    const mailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
-    return mailRegex.test(mail);
-}
-
 function isFormControlNotANumber(formControl) {
     return formControl.validity.badInput;
 }
