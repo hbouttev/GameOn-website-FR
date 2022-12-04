@@ -7,6 +7,38 @@ function editNav() {
     }
 }
 
+// types of errors and associated messages for each form control
+const FORM_ERRORS = {
+    first: {
+        empty: "Votre prénom est requis.",
+        too_short: "Veuillez entrer 2 caractères ou plus pour le prénom.",
+        invalid: "Veuillez entrer un prénom valide."
+    },
+    last: {
+        empty: "Votre nom est requis.",
+        too_short: "Veuillez entrer 2 caractères ou plus pour le nom.",
+        invalid: "Veuillez entrer un nom valide."
+    },
+    email: {
+        empty: "Une adresse mail est requise.",
+        invalid: "Veuillez entrer une adresse email valide.",
+    },
+    birthdate: {
+        empty: "Votre date de naissance est requise.",
+        invalid: "Veuillez entrer une date de naissance valide.",
+    },
+    quantity: {
+        empty: "Le nombre de tournois est requis.",
+        invalid: "Veuillez entrer un nombre de tournois valide.",
+    },
+    location: {
+        empty: "Veuillez sélectionner une ville.",
+    },
+    terms: {
+        empty: "Veuillez accepter les conditions d'utilisation.",
+    }
+}
+
 // DOM Elements
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
