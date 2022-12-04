@@ -103,6 +103,10 @@ function closeModal() {
     modalbg.style.display = "none";
 }
 
+/**
+ * Reset a form control error if previously set, and hide the error element. This is mandatory to be able to validate
+ * the form control again with the Constraint Validation API.
+ */
 function resetFormControlError(formControl) {
     if (formControl.validity.customError) {
         // needed for validity.valid to be true
@@ -112,37 +116,55 @@ function resetFormControlError(formControl) {
     }
 }
 
+/**
+ * Check if a form control input is not a number using the Constraint Validation API.
+ */
 function isFormControlNotANumber(formControl) {
     return formControl.validity.badInput;
 }
 
+/**
+ * Check if a form control input is out of range using the Constraint Validation API.
+ */
 function isFormControlOutOfRange(formControl) {
     return formControl.validity.rangeUnderflow || formControl.validity.rangeOverflow;
 }
 
-// errorName is the name of the error in the FORM_ERRORS object. It can be "empty", "too_short" or "invalid".
+/**
+ * Set a form control error message depending on its name and the error type.
+ * errorName is the name of the error in the FORM_ERRORS object. It can be "empty", "too_short" or "invalid".
+ */
 function setFormControlErrorMessage(formControl, errorName) {
     formControl.setCustomValidity(FORM_ERRORS[formControl.name][errorName]);
 }
 
+/**
+ * Copy a form control error message to its form data error element for displaying.
+ */
 function setElementFormDataErrorMessage(formControl) {
     formControl.parentElement.setAttribute("data-error", formControl.validationMessage);
     formControl.parentElement.setAttribute("data-error-visible", "false");
 }
 
-// display previously set and hidden errors messages in the form
+/**
+ * Display previously set and hidden errors messages in the form.
+ */
 function displayFormErrorsMessages(form) {
     form.querySelectorAll(":scope > .formData[data-error-visible=false]").forEach((formDataError) => {
         formDataError.setAttribute("data-error-visible", "true");
     });
 }
 
-// display previously set and hidden errors messages for a form control
+/**
+ * Display previously set and hidden error message for a form control.
+ */
 function displayFormControlErrorMessage(formControl) {
     formControl.parentElement.setAttribute("data-error-visible", "true");
 }
 
-// check if required form controls are not empty
+/**
+ * Check if required form controls are not empty.
+ */
 function validateRequiredFormControl(formControl) {
     // check if the element has a required attribute and is empty
     if (formControl.validity.valueMissing) {
@@ -152,6 +174,9 @@ function validateRequiredFormControl(formControl) {
     return true;
 }
 
+/**
+ * Validate name form control, being first or last.
+ */
 function validateName(formControl) {
     let isEmpty = !validateRequiredFormControl(formControl);
     if (isEmpty) {
@@ -166,6 +191,9 @@ function validateName(formControl) {
     return true;
 }
 
+/**
+ * Validate email form control.
+ */
 function validateMail(formControl) {
     let isEmpty = !validateRequiredFormControl(formControl);
     if (isEmpty) {
@@ -177,6 +205,9 @@ function validateMail(formControl) {
     return true;
 }
 
+/**
+ * Validate birthdate form control.
+ */
 function validateBirthdate(formControl) {
     let isEmpty = !validateRequiredFormControl(formControl);
     if (isEmpty) {
@@ -188,6 +219,9 @@ function validateBirthdate(formControl) {
     return true;
 }
 
+/**
+ * Validate quantity form control.
+ */
 function validateQuantity(formControl) {
     let isEmpty = !validateRequiredFormControl(formControl);
     if (isEmpty) {
@@ -199,6 +233,9 @@ function validateQuantity(formControl) {
     return true;
 }
 
+/**
+ * Validate location checkboxes from a RadioNodeList.
+ */
 function validateLocation(locationRadioNodeList) {
     // if no location radio is selected
     if (locationRadioNodeList.value === "") {
@@ -210,7 +247,9 @@ function validateLocation(locationRadioNodeList) {
     return true
 }
 
-// display confirmation in the modal after form validation and submission
+/**
+ * Display confirmation in the modal after form validation and submission.
+ */
 function displayConfirmationMessage() {
     let modalBody = modalbg.querySelector(".modal-body");
     let modalContentHeight = reserveForm.offsetHeight;
@@ -241,6 +280,9 @@ function displayConfirmationMessage() {
     confirmationCloseButton.addEventListener("click", closeModal);
 }
 
+/**
+ * Validate the form and display the confirmation message if the form is valid.
+ */
 function validateForm(event) {
     event.preventDefault();
 
