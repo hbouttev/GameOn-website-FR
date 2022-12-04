@@ -202,10 +202,7 @@ main {
 
 label {
   font-family: var(--font-default);
-  font-size: 17px;
-  font-weight: normal;
   display: inline-block;
-  margin-bottom: 11px;
 }
 input {
   padding: 8px;
@@ -220,6 +217,11 @@ input {
   font-size: 20px;
   height: 48px;
 }
+
+.formData {
+  margin-bottom: 4px;
+}
+
 .formData[data-error]::after {
   content: attr(data-error);
   font-size: 0.4em;
@@ -248,7 +250,7 @@ input[data-error]::after {
 .checkbox2-label {
   position: relative;
   margin-left: 36px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: normal;
 }
 .checkbox-label .checkbox-icon,
@@ -412,8 +414,12 @@ input[data-error]::after {
 }
 /* custom select end */
 .text-label {
+  font-family: var(--font-default);
   font-weight: normal;
   font-size: 16px;
+  padding: 0;
+  display: inline-block;
+  margin: 11px 0;
 }
 .hero-section {
   border-radius: 10px;
