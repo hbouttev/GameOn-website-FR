@@ -55,6 +55,45 @@ modalCloseBtn.addEventListener("click", closeModal);
 // form submit event
 reserveForm.addEventListener("submit", validateForm);
 
+// validate form controls when input is changed
+["first", "last"].forEach(formControlName => {
+    reserveForm.elements.namedItem(formControlName).addEventListener("change", (event) => {
+        event.preventDefault();
+        resetFormControlError(event.target);
+        if (!validateName(event.target)) {
+            setElementFormDataErrorMessage(event.target);
+            displayFormControlErrorMessage(event.target);
+        }
+    });
+});
+
+reserveForm.elements.namedItem("email").addEventListener("change", (event) => {
+    event.preventDefault();
+    resetFormControlError(event.target);
+    if (!validateMail(event.target)) {
+        setElementFormDataErrorMessage(event.target);
+        displayFormControlErrorMessage(event.target);
+    }
+});
+
+reserveForm.elements.namedItem("birthdate").addEventListener("change", (event) => {
+    event.preventDefault();
+    resetFormControlError(event.target);
+    if (!validateBirthdate(event.target)) {
+        setElementFormDataErrorMessage(event.target);
+        displayFormControlErrorMessage(event.target);
+    }
+});
+
+reserveForm.elements.namedItem("quantity").addEventListener("change", (event) => {
+    event.preventDefault();
+    resetFormControlError(event.target);
+    if (!validateQuantity(event.target)) {
+        setElementFormDataErrorMessage(event.target);
+        displayFormControlErrorMessage(event.target);
+    }
+});
+
 // launch modal form
 function launchModal() {
     modalbg.style.display = "block";
@@ -109,6 +148,11 @@ function displayFormErrorsMessages(form) {
     form.querySelectorAll(":scope > .formData[data-error-visible=false]").forEach((formDataError) => {
         formDataError.setAttribute("data-error-visible", "true");
     });
+}
+
+// display previously set and hidden errors messages for a form control
+function displayFormControlErrorMessage(formControl) {
+    formControl.parentElement.setAttribute("data-error-visible", "true");
 }
 
 // check if required form controls are not empty
