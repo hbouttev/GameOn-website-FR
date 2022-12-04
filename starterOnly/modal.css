@@ -71,6 +71,14 @@ img {
   .topnav a.icon {
     float: right;
     display: block;
+    color: #ff0000;
+  }
+  .main-navbar {
+    float: unset;
+    top: 15px;
+    right: 15px;
+    position: fixed;
+    z-index: 5;
   }
 }
 
@@ -85,6 +93,11 @@ img {
     float: none;
     display: block;
     text-align: left;
+  }
+  .topnav.responsive .main-navbar {
+    background: white;
+    border-radius: 15px;
+    border: solid 1px #ff0000;
   }
 }
 
