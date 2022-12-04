@@ -7,11 +7,42 @@ function editNav() {
     }
 }
 
+// types of errors and associated messages for each form control
+const FORM_ERRORS = {
+    first: {
+        empty: "Votre prénom est requis.",
+        too_short: "Veuillez entrer 2 caractères ou plus pour le prénom.",
+        invalid: "Veuillez entrer un prénom valide."
+    },
+    last: {
+        empty: "Votre nom est requis.",
+        too_short: "Veuillez entrer 2 caractères ou plus pour le nom.",
+        invalid: "Veuillez entrer un nom valide."
+    },
+    email: {
+        empty: "Une adresse mail est requise.",
+        invalid: "Veuillez entrer une adresse email valide.",
+    },
+    birthdate: {
+        empty: "Votre date de naissance est requise.",
+        invalid: "Veuillez entrer une date de naissance valide.",
+    },
+    quantity: {
+        empty: "Le nombre de tournois est requis.",
+        invalid: "Veuillez entrer un nombre de tournois valide.",
+    },
+    location: {
+        empty: "Veuillez sélectionner une ville.",
+    },
+    terms: {
+        empty: "Veuillez accepter les conditions d'utilisation.",
+    }
+}
+
 // DOM Elements
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const modalCloseBtn = document.querySelector(".close");
-const formData = document.querySelectorAll(".formData");
 const reserveForm = document.forms.namedItem("reserve");
 
 // launch modal event
@@ -23,6 +54,45 @@ modalCloseBtn.addEventListener("click", closeModal);
 // form submit event
 reserveForm.addEventListener("submit", validateForm);
 
+// validate form controls when input is changed
+["first", "last"].forEach(formControlName => {
+    reserveForm.elements.namedItem(formControlName).addEventListener("change", (event) => {
+        event.preventDefault();
+        resetFormControlError(event.target);
+        if (!validateName(event.target)) {
+            setElementFormDataErrorMessage(event.target);
+            displayFormControlErrorMessage(event.target);
+        }
+    });
+});
+
+reserveForm.elements.namedItem("email").addEventListener("change", (event) => {
+    event.preventDefault();
+    resetFormControlError(event.target);
+    if (!validateMail(event.target)) {
+        setElementFormDataErrorMessage(event.target);
+        displayFormControlErrorMessage(event.target);
+    }
+});
+
+reserveForm.elements.namedItem("birthdate").addEventListener("change", (event) => {
+    event.preventDefault();
+    resetFormControlError(event.target);
+    if (!validateBirthdate(event.target)) {
+        setElementFormDataErrorMessage(event.target);
+        displayFormControlErrorMessage(event.target);
+    }
+});
+
+reserveForm.elements.namedItem("quantity").addEventListener("change", (event) => {
+    event.preventDefault();
+    resetFormControlError(event.target);
+    if (!validateQuantity(event.target)) {
+        setElementFormDataErrorMessage(event.target);
+        displayFormControlErrorMessage(event.target);
+    }
+});
+
 // launch modal form
 function launchModal() {
     modalbg.style.display = "block";
@@ -33,58 +103,195 @@ function closeModal() {
     modalbg.style.display = "none";
 }
 
-function validateForm(event) {
-    let formNotValid = false;
+function resetFormControlError(formControl) {
+    if (formControl.validity.customError) {
+        // needed for validity.valid to be true
+        formControl.setCustomValidity("");
+        // hide previously displayed error message without removing it
+        formControl.parentElement.removeAttribute("data-error-visible");
+    }
+}
 
+function isFormControlNotANumber(formControl) {
+    return formControl.validity.badInput;
+}
+
+function isFormControlOutOfRange(formControl) {
+    return formControl.validity.rangeUnderflow || formControl.validity.rangeOverflow;
+}
+
+// errorName is the name of the error in the FORM_ERRORS object. It can be "empty", "too_short" or "invalid".
+function setFormControlErrorMessage(formControl, errorName) {
+    formControl.setCustomValidity(FORM_ERRORS[formControl.name][errorName]);
+}
+
+function setElementFormDataErrorMessage(formControl) {
+    formControl.parentElement.setAttribute("data-error", formControl.validationMessage);
+    formControl.parentElement.setAttribute("data-error-visible", "false");
+}
+
+// display previously set and hidden errors messages in the form
+function displayFormErrorsMessages(form) {
+    form.querySelectorAll(":scope > .formData[data-error-visible=false]").forEach((formDataError) => {
+        formDataError.setAttribute("data-error-visible", "true");
+    });
+}
+
+// display previously set and hidden errors messages for a form control
+function displayFormControlErrorMessage(formControl) {
+    formControl.parentElement.setAttribute("data-error-visible", "true");
+}
+
+// check if required form controls are not empty
+function validateRequiredFormControl(formControl) {
+    // check if the element has a required attribute and is empty
+    if (formControl.validity.valueMissing) {
+        setFormControlErrorMessage(formControl, "empty")
+        return false;
+    }
+    return true;
+}
+
+function validateName(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (formControl.validity.tooShort) {
+        setFormControlErrorMessage(formControl, "too_short")
+        return false;
+    } else if (formControl.validity.patternMismatch) {
+        setFormControlErrorMessage(formControl, "invalid")
+        return false;
+    }
+    return true;
+}
+
+function validateMail(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (formControl.validity.typeMismatch || formControl.validity.patternMismatch) {
+        formControl.setCustomValidity(`${FORM_ERRORS[formControl.name].invalid}`);
+        return false;
+    }
+    return true;
+}
+
+function validateBirthdate(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (isFormControlOutOfRange(formControl)) {
+        formControl.setCustomValidity(`${FORM_ERRORS[formControl.name].invalid}`);
+        return false;
+    }
+    return true;
+}
+
+function validateQuantity(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (isFormControlNotANumber(formControl) || isFormControlOutOfRange(formControl)) {
+        formControl.setCustomValidity(`${FORM_ERRORS[formControl.name].invalid}`);
+        return false;
+    }
+    return true;
+}
+
+function validateLocation(locationRadioNodeList) {
+    // if no location radio is selected
+    if (locationRadioNodeList.value === "") {
+        // we use the first radio button to store the error message
+        setFormControlErrorMessage(locationRadioNodeList[0], "empty");
+        setElementFormDataErrorMessage(locationRadioNodeList[0])
+        return false;
+    }
+    return true
+}
+
+// display confirmation in the modal after form validation and submission
+function displayConfirmationMessage() {
+    let modalBody = modalbg.querySelector(".modal-body");
+    let modalContentHeight = reserveForm.offsetHeight;
+    const confirmationDisplay = document.createElement("div");
+    const confirmationMessage = document.createElement("span");
+    const confirmationCloseButton = document.createElement("button");
+    confirmationCloseButton.classList.add("button", "btn-submit");
+    confirmationCloseButton.textContent = "Fermer";
+
+    confirmationDisplay.append(confirmationMessage, confirmationCloseButton);
+    confirmationDisplay.style.height = (modalContentHeight) + "px";
+    confirmationDisplay.style.display = "flex";
+    confirmationDisplay.style.flexDirection = "column";
+
+    confirmationMessage.textContent = "Merci pour votre inscription !";
+    confirmationMessage.style.display = "flex";
+    confirmationMessage.style.alignItems = "center";
+    confirmationMessage.style.justifyContent = "center";
+    confirmationMessage.style.height = "100%";
+    confirmationMessage.style.width = "80%";
+    confirmationMessage.style.margin = "auto";
+    confirmationMessage.style.textAlign = "center";
+    confirmationMessage.style.fontSize = "36px";
+
+    reserveForm.classList.add("select-hide");
+    modalBody.append(confirmationDisplay);
+
+    confirmationCloseButton.addEventListener("click", closeModal);
+}
+
+function validateForm(event) {
+    event.preventDefault();
+
+    let isFormValid = true;
     const form = event.target;
     const formControlsCollection = form.elements;
 
+    // validate form controls implementing Constraint Validation API (all but radio buttons)
     for (const formControl of formControlsCollection) {
-        console.log(formControl.name);
+        // reset previous error message if any
+        resetFormControlError(formControl);
 
-        switch (formControl.name) {
-            case "first":
-                if (formControl.validity.valueMissing) {
-                    formNotValid = true;
-                    console.error("first name is required");
-                    // formControl.nextElementSibling.innerHTML =
-                    //     "Veuillez entrer 2 caractères ou plus pour le champ du prénom.";
-                    // formNotValid = true;
-                } else if (formControl.value.length < 2) {
-                    formNotValid = true;
-                    console.error("first name is too short");
-                }
-                break;
-            case "last":
-                break;
-            case "email":
-                break;
-            case "birthdate":
-                break;
-            case "quantity":
-                break;
-            case "location":
-                break;
-            case "terms-and-conditions":
-                break;
-            case "newsletter":
-                break;
+        if (!formControl.validity.valid) {
+            isFormValid = false;
 
+            switch (formControl.name) {
+                case "first":
+                case "last":
+                    validateName(formControl);
+                    break;
+                case "email":
+                    validateMail(formControl);
+                    break;
+                case "birthdate":
+                    validateBirthdate(formControl);
+                    break;
+                case "quantity":
+                    validateQuantity(formControl);
+                    break;
+                case "location":
+                    // validation is done after, radio buttons don't implement Constraint Validation API
+                    break;
+                case "terms":
+                    validateRequiredFormControl(formControl);
+                    break;
+                case "newsletter":
+                    break;
+            }
+            setElementFormDataErrorMessage(formControl);
         }
     }
-
-    // console.log(event);
-    // console.log(form);
-    // console.log(event.target.elements);
-    // console.log(event.target.elements.location);
-
-    console.log("validation");
-
-
-    if (formNotValid) {
-        event.preventDefault();
-        return false;
+    // validate form controls not implementing Constraint Validation API (radio buttons)
+    if (!validateLocation(formControlsCollection.namedItem("location"))) {
+        isFormValid = false;
     }
 
+    if (!isFormValid) {
+        // display error messages. Separate loop for animation
+        displayFormErrorsMessages(form);
+        return false;
+    }
+    displayConfirmationMessage();
     return true;
 }

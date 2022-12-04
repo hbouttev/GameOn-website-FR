@@ -58,48 +58,61 @@
             <div class="modal-body">
                 <form name="reserve"
                       action="index.html"
-                      method="get">
+                      method="get"
+                      novalidate
+                >
                     <div class="formData">
-                        <label for="first">Prénom</label><br>
+                        <label class="text-label" for="first">Prénom</label>
                         <input class="text-control"
                                type="text"
                                id="first"
                                name="first"
                                minlength="2"
-                        /><br>
+                               pattern="^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$"
+                               required
+                        />
                     </div>
                     <div class="formData">
-                        <label for="last">Nom</label><br>
+                        <label class="text-label" for="last">Nom</label>
                         <input class="text-control"
                                type="text"
                                id="last"
                                name="last"
-                        /><br>
+                               minlength="2"
+                               pattern="^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$"
+                               required
+                        />
                     </div>
                     <div class="formData">
-                        <label for="email">E-mail</label><br>
+                        <label class="text-label" for="email">E-mail</label>
                         <input class="text-control"
                                type="email"
                                id="email"
                                name="email"
-                        /><br>
+                               pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+                               required
+                        />
                     </div>
                     <div class="formData">
-                        <label for="birthdate">Date de naissance</label><br>
+                        <label class="text-label" for="birthdate">Date de naissance</label>
                         <input class="text-control"
                                type="date"
                                id="birthdate"
                                name="birthdate"
-                        /><br>
+                               min="1900-01-01"
+                               max="2022-12-31"
+                               required
+                        />
                     </div>
                     <div class="formData">
-                        <label for="quantity">À combien de tournois GameOn avez-vous déjà participé ?</label><br>
+                        <label class="text-label" for="quantity">À combien de tournois GameOn avez-vous déjà participé ?</label>
                         <input type="number"
                                class="text-control"
                                id="quantity"
                                name="quantity"
                                min="0"
                                max="99"
+                               required
                         />
                     </div>
                     <p class="text-label">A quel tournoi souhaitez-vous participer cette année ?</p>
@@ -170,7 +183,7 @@
                         <input class="checkbox-input"
                                type="checkbox"
                                id="checkbox1"
-                               name="terms-and-conditions"
+                               name="terms"
                                checked
                                required
                         />
@@ -178,7 +191,7 @@
                             <span class="checkbox-icon"></span>
                             J'ai lu et accepté les conditions d'utilisation.
                         </label>
-                        <br>
+
                         <input class="checkbox-input"
                                type="checkbox"
                                id="checkbox2"
@@ -188,7 +201,7 @@
                             <span class="checkbox-icon"></span>
                             Je souhaite être prévenu des prochains évènements.
                         </label>
-                        <br>
+
                     </div>
                     <input class="button btn-submit"
                            type="submit"
