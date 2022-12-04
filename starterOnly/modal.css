@@ -349,6 +349,9 @@ input[data-error]::after {
   cursor: pointer;
   border: 0;
 }
+.btn-submit {
+  margin-top: 20px;
+}
 /* custom select styles */
 .custom-select {
   position: relative;
