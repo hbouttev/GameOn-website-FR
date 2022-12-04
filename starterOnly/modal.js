@@ -65,58 +65,155 @@ function closeModal() {
     modalbg.style.display = "none";
 }
 
-function validateForm(event) {
-    let formNotValid = false;
+function resetFormControlError(formControl) {
+    if (formControl.validity.customError) {
+        // needed for validity.valid to be true
+        formControl.setCustomValidity("");
+        // hide previously displayed error message without removing it
+        formControl.parentElement.removeAttribute("data-error-visible");
+    }
+}
 
+function isValideName(name) {
+    const nameRegex = /^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/;
+    console.log(name);
+    console.log(nameRegex.test(name));
+    return nameRegex.test(name);
+}
+
+function isValideMail(mail) {
+    const mailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
+    return mailRegex.test(mail);
+}
+
+function isFormControlNotANumber(formControl) {
+    return formControl.validity.badInput;
+}
+
+function isFormControlOutOfRange(formControl) {
+    return formControl.validity.rangeUnderflow || formControl.validity.rangeOverflow;
+}
+
+// errorName is the name of the error in the FORM_ERRORS object. It can be "empty", "too_short" or "invalid".
+function setFormControlErrorMessage(formControl, errorName) {
+    formControl.setCustomValidity(FORM_ERRORS[formControl.name][errorName]);
+}
+
+// check if required form controls are not empty
+function validateRequiredFormControl(formControl) {
+    // check if the element has a required attribute and is empty
+    if (formControl.validity.valueMissing) {
+        setFormControlErrorMessage(formControl, "empty")
+        return false;
+    }
+    return true;
+}
+
+function validateName(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (formControl.validity.tooShort) {
+        setFormControlErrorMessage(formControl, "too_short")
+        return false;
+    } else if (formControl.validity.patternMismatch) {
+        setFormControlErrorMessage(formControl, "invalid")
+        return false;
+    }
+    return true;
+}
+
+function validateMail(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (formControl.validity.typeMismatch || formControl.validity.patternMismatch) {
+        formControl.setCustomValidity(`${FORM_ERRORS[formControl.name].invalid}`);
+        return false;
+    }
+    return true;
+}
+
+function validateBirthdate(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (isFormControlOutOfRange(formControl)) {
+        formControl.setCustomValidity(`${FORM_ERRORS[formControl.name].invalid}`);
+        return false;
+    }
+    return true;
+}
+
+function validateQuantity(formControl) {
+    let isEmpty = !validateRequiredFormControl(formControl);
+    if (isEmpty) {
+        return false;
+    } else if (isFormControlNotANumber(formControl) || isFormControlOutOfRange(formControl)) {
+        formControl.setCustomValidity(`${FORM_ERRORS[formControl.name].invalid}`);
+        return false;
+    }
+    return true;
+}
+
+function validateLocation(locationRadioNodeList) {
+    // if no location radio is selected
+    if (locationRadioNodeList.value === "") {
+        // we use the first radio button to store the error message
+        setFormControlErrorMessage(locationRadioNodeList[0], "empty");
+        setElementFormDataErrorMessage(locationRadioNodeList[0])
+        return false;
+    }
+    return true
+}
+
+function validateForm(event) {
+    event.preventDefault();
+
+    let isFormValid = true;
     const form = event.target;
     const formControlsCollection = form.elements;
 
+    // validate form controls implementing Constraint Validation API (all but radio buttons)
     for (const formControl of formControlsCollection) {
-        console.log(formControl.name);
+        // reset previous error message if any
+        resetFormControlError(formControl);
 
-        switch (formControl.name) {
-            case "first":
-                if (formControl.validity.valueMissing) {
-                    formNotValid = true;
-                    console.error("first name is required");
-                    // formControl.nextElementSibling.innerHTML =
-                    //     "Veuillez entrer 2 caractères ou plus pour le champ du prénom.";
-                    // formNotValid = true;
-                } else if (formControl.value.length < 2) {
-                    formNotValid = true;
-                    console.error("first name is too short");
-                }
-                break;
-            case "last":
-                break;
-            case "email":
-                break;
-            case "birthdate":
-                break;
-            case "quantity":
-                break;
-            case "location":
-                break;
-            case "terms-and-conditions":
-                break;
-            case "newsletter":
-                break;
+        if (!formControl.validity.valid) {
+            isFormValid = false;
 
+            switch (formControl.name) {
+                case "first":
+                case "last":
+                    validateName(formControl);
+                    break;
+                case "email":
+                    validateMail(formControl);
+                    break;
+                case "birthdate":
+                    validateBirthdate(formControl);
+                    break;
+                case "quantity":
+                    validateQuantity(formControl);
+                    break;
+                case "location":
+                    // validation is done after, radio buttons don't implement Constraint Validation API
+                    break;
+                case "terms":
+                    validateRequiredFormControl(formControl);
+                    break;
+                case "newsletter":
+                    break;
+            }
         }
     }
-
-    // console.log(event);
-    // console.log(form);
-    // console.log(event.target.elements);
-    // console.log(event.target.elements.location);
-
-    console.log("validation");
-
-
-    if (formNotValid) {
-        event.preventDefault();
-        return false;
+    // validate form controls not implementing Constraint Validation API (radio buttons)
+    if (!validateLocation(formControlsCollection.namedItem("location"))) {
+        isFormValid = false;
     }
 
+    if (!isFormValid) {
+        return false;
+    }
     return true;
 }
