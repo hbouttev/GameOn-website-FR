@@ -99,6 +99,18 @@ function setFormControlErrorMessage(formControl, errorName) {
     formControl.setCustomValidity(FORM_ERRORS[formControl.name][errorName]);
 }
 
+function setElementFormDataErrorMessage(formControl) {
+    formControl.parentElement.setAttribute("data-error", formControl.validationMessage);
+    formControl.parentElement.setAttribute("data-error-visible", "false");
+}
+
+// display previously set and hidden errors messages in the form
+function displayFormErrorsMessages(form) {
+    form.querySelectorAll(":scope > .formData[data-error-visible=false]").forEach((formDataError) => {
+        formDataError.setAttribute("data-error-visible", "true");
+    });
+}
+
 // check if required form controls are not empty
 function validateRequiredFormControl(formControl) {
     // check if the element has a required attribute and is empty
@@ -205,6 +217,7 @@ function validateForm(event) {
                 case "newsletter":
                     break;
             }
+            setElementFormDataErrorMessage(formControl);
         }
     }
     // validate form controls not implementing Constraint Validation API (radio buttons)
@@ -213,6 +226,8 @@ function validateForm(event) {
     }
 
     if (!isFormValid) {
+        // display error messages. Separate loop for animation
+        displayFormErrorsMessages(form);
         return false;
     }
     return true;
