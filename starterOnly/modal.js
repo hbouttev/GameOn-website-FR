@@ -43,7 +43,6 @@ const FORM_ERRORS = {
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const modalCloseBtn = document.querySelector(".close");
-const formData = document.querySelectorAll(".formData");
 const reserveForm = document.forms.namedItem("reserve");
 
 // launch modal event
