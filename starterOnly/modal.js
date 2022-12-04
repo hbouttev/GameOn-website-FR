@@ -179,6 +179,37 @@ function validateLocation(locationRadioNodeList) {
     return true
 }
 
+// display confirmation in the modal after form validation and submission
+function displayConfirmationMessage() {
+    let modalBody = modalbg.querySelector(".modal-body");
+    let modalContentHeight = reserveForm.offsetHeight;
+    const confirmationDisplay = document.createElement("div");
+    const confirmationMessage = document.createElement("span");
+    const confirmationCloseButton = document.createElement("button");
+    confirmationCloseButton.classList.add("button", "btn-submit");
+    confirmationCloseButton.textContent = "Fermer";
+
+    confirmationDisplay.append(confirmationMessage, confirmationCloseButton);
+    confirmationDisplay.style.height = (modalContentHeight) + "px";
+    confirmationDisplay.style.display = "flex";
+    confirmationDisplay.style.flexDirection = "column";
+
+    confirmationMessage.textContent = "Merci pour votre inscription !";
+    confirmationMessage.style.display = "flex";
+    confirmationMessage.style.alignItems = "center";
+    confirmationMessage.style.justifyContent = "center";
+    confirmationMessage.style.height = "100%";
+    confirmationMessage.style.width = "80%";
+    confirmationMessage.style.margin = "auto";
+    confirmationMessage.style.textAlign = "center";
+    confirmationMessage.style.fontSize = "36px";
+
+    reserveForm.classList.add("select-hide");
+    modalBody.append(confirmationDisplay);
+
+    confirmationCloseButton.addEventListener("click", closeModal);
+}
+
 function validateForm(event) {
     event.preventDefault();
 
@@ -230,5 +261,6 @@ function validateForm(event) {
         displayFormErrorsMessages(form);
         return false;
     }
+    displayConfirmationMessage();
     return true;
 }
