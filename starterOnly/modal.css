@@ -104,6 +104,9 @@ img {
 
 
  @media screen and (max-width: 540px) {
+   .header-logo img {
+     height: 20px;
+   }
   .topnav a {display: none;}
   .topnav a.icon {
     float: right;
