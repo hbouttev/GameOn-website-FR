@@ -84,7 +84,9 @@ reserveForm.elements.namedItem("birthdate").addEventListener("change", (event) =
     }
 });
 
-reserveForm.elements.namedItem("quantity").addEventListener("change", (event) => {
+// Input of type number in Firefox accepts letters and special characters and doesn't trigger change event on first
+// wrong input. We use input event instead to fix this.
+reserveForm.elements.namedItem("quantity").addEventListener("input", (event) => {
     event.preventDefault();
     resetFormControlError(event.target);
     if (!validateQuantity(event.target)) {
@@ -120,6 +122,7 @@ function resetFormControlError(formControl) {
  * Check if a form control input is not a number using the Constraint Validation API.
  */
 function isFormControlNotANumber(formControl) {
+    // validity.badInput is true if the input is not a number. Doesn't work on first wrong input with change event in Firefox.
     return formControl.validity.badInput;
 }
 
