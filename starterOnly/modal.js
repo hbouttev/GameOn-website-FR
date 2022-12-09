@@ -113,6 +113,12 @@ function launchModal() {
 // close modal form
 function closeModal() {
     modalbg.style.display = "none";
+    // if the form was previously successfully submitted we display it again and hide the confirmation message
+    const confirmationElement = document.querySelector(".confirmation-display");
+    if (confirmationElement) {
+        reserveForm.classList.remove("select-hide");
+        confirmationElement.style.display = "none";
+    }
 }
 
 /**
@@ -264,33 +270,41 @@ function validateLocation(locationRadioNodeList) {
  * Display confirmation in the modal after form validation and submission.
  */
 function displayConfirmationMessage() {
-    let modalBody = modalbg.querySelector(".modal-body");
-    let modalContentHeight = reserveForm.offsetHeight;
-    const confirmationDisplay = document.createElement("div");
-    const confirmationMessage = document.createElement("span");
-    const confirmationCloseButton = document.createElement("button");
-    confirmationCloseButton.classList.add("button", "btn-submit");
-    confirmationCloseButton.textContent = "Fermer";
+    const confirmationElement = document.querySelector(".confirmation-display");
+    if (confirmationElement) {
+        reserveForm.classList.add("select-hide");
+        confirmationElement.style.display = "flex";
+    } else {
 
-    confirmationDisplay.append(confirmationMessage, confirmationCloseButton);
-    confirmationDisplay.style.height = (modalContentHeight) + "px";
-    confirmationDisplay.style.display = "flex";
-    confirmationDisplay.style.flexDirection = "column";
+        const modalBody = modalbg.querySelector(".modal-body");
+        let modalContentHeight = reserveForm.offsetHeight;
+        const confirmationDisplay = document.createElement("div");
+        const confirmationMessage = document.createElement("span");
+        const confirmationCloseButton = document.createElement("button");
+        confirmationDisplay.classList.add("confirmation-display");
+        confirmationCloseButton.classList.add("button", "btn-submit");
+        confirmationCloseButton.textContent = "Fermer";
 
-    confirmationMessage.textContent = "Merci pour votre inscription !";
-    confirmationMessage.style.display = "flex";
-    confirmationMessage.style.alignItems = "center";
-    confirmationMessage.style.justifyContent = "center";
-    confirmationMessage.style.height = "100%";
-    confirmationMessage.style.width = "80%";
-    confirmationMessage.style.margin = "auto";
-    confirmationMessage.style.textAlign = "center";
-    confirmationMessage.style.fontSize = "36px";
+        confirmationDisplay.append(confirmationMessage, confirmationCloseButton);
+        confirmationDisplay.style.height = (modalContentHeight) + "px";
+        confirmationDisplay.style.display = "flex";
+        confirmationDisplay.style.flexDirection = "column";
 
-    reserveForm.classList.add("select-hide");
-    modalBody.append(confirmationDisplay);
+        confirmationMessage.textContent = "Merci pour votre inscription !";
+        confirmationMessage.style.display = "flex";
+        confirmationMessage.style.alignItems = "center";
+        confirmationMessage.style.justifyContent = "center";
+        confirmationMessage.style.height = "100%";
+        confirmationMessage.style.width = "80%";
+        confirmationMessage.style.margin = "auto";
+        confirmationMessage.style.textAlign = "center";
+        confirmationMessage.style.fontSize = "36px";
 
-    confirmationCloseButton.addEventListener("click", closeModal);
+        reserveForm.classList.add("select-hide");
+        modalBody.append(confirmationDisplay);
+
+        confirmationCloseButton.addEventListener("click", closeModal);
+    }
 }
 
 /**
@@ -348,5 +362,6 @@ function validateForm(event) {
         return false;
     }
     displayConfirmationMessage();
+    form.reset();
     return true;
 }
