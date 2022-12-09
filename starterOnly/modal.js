@@ -95,6 +95,16 @@ reserveForm.elements.namedItem("quantity").addEventListener("input", (event) => 
     }
 });
 
+// Dynamically remove error message for location radio button when it was set by previous submit validation and is then
+// selected.
+// The error message is set in the first radio button of the group.
+reserveForm.elements.namedItem("location").forEach((locationRadio) => {
+    locationRadio.addEventListener("change", (event) => {
+        event.preventDefault();
+        resetFormControlError(reserveForm.elements.namedItem("location")[0]);
+    })
+});
+
 // launch modal form
 function launchModal() {
     modalbg.style.display = "block";
