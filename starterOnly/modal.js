@@ -105,6 +105,15 @@ reserveForm.elements.namedItem("location").forEach((locationRadio) => {
     })
 });
 
+reserveForm.elements.namedItem("terms").addEventListener("change", (event) => {
+    event.preventDefault();
+    resetFormControlError(event.target);
+    if (!validateRequiredFormControl(event.target)) {
+        setElementFormDataErrorMessage(event.target);
+        displayFormControlErrorMessage(event.target);
+    }
+});
+
 // launch modal form
 function launchModal() {
     modalbg.style.display = "block";
